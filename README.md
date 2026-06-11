@@ -76,3 +76,8 @@ from hexdump : [inventivehq](https://inventivehq.com/tools/security/machine-code
 in bash : `readelf -W -l ./binary | grep GNU_STACK` -> R READABLE, W WRITABLE, E EXECUTABLE
 - RWE : No stack protection, the stack is executable
 - RW : Stack is not executable
+
+## Debug gdb
+
+Child process status in gdb:
+- set follow-fork-mode child

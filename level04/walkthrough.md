@@ -48,3 +48,4 @@ recup adresse debut et fin de la lib-c
 
 find adresse-debut, adresse-fin, "/bin/sh"
 -> adresse de "/bin/sh"
+
