@@ -77,7 +77,6 @@ in bash : `readelf -W -l ./binary | grep GNU_STACK` -> R READABLE, W WRITABLE, E
 - RWE : No stack protection, the stack is executable
 - RW : Stack is not executable
 
-## Debug gdb
+## Gdb child process debugging
 
-Child process status in gdb:
-- set follow-fork-mode child
+in gdb : `set follow-fork-mode child`
