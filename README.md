@@ -80,3 +80,45 @@ in bash : `readelf -W -l ./binary | grep GNU_STACK` -> R READABLE, W WRITABLE, E
 ## Gdb child process debugging
 
 in gdb : `set follow-fork-mode child`
+
+## Checksec of binaries : securities meanings
+
+### Example 
+
+```shell
+~$ checksec --file ./path/to/binary
+RELRO           STACK CANARY      NX            PIE             RPATH      RUNPATH      FILE
+Partial RELRO   No canary found   NX enabled    PIE enabled     No RPATH   No RUNPATH   ./path/to/binary
+```
+
+### Meaning
+
+### RELRO : Relocation Read-Only
+
+Rights on the Global Offset Table (GOT) of the binary
+
+- Partial RELRO / No RELRO : The GOT is not read-only, can be overwritten by an attacker
+- Full RELRO               : The GOT is read-only, here it can't.
+
+### STACK CANARY : Stack smashing protector
+
+Return address is protected by a canary value
+- it's a buffer with a random value that is put between the local variables and the return address
+- it's checked at the end of the function with another copy of the canary value, if they are different, the program aborts
+
+### NX : No eXecute
+
+- NX enabled  : The stack is not executable, so you can't execute code from the stack
+- NX disabled : The stack is executable, so you can put executable code in the stack and execute it (e.g shellcode)
+
+### PIE : Position Independent Executable
+
+- PIE enabled  : The binary is loaded at a random address, every run will have different addresses for functions and variables
+- PIE disabled : The binary is loaded at a fixed address, easier to exploit
+
+### RPATH and RUNPATH : Library search path
+
+RPATH specifies where the dynamic loader should search for shared libraries.
+
+- No RPATH : The dynamic loader will search for shared libraries in default locations (e.g /lib, /usr/lib) in first
+- RPATH    : A specific path is specified at compile time, it will search the specified directories first, if a dir is writable it can be dangerous
