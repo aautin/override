@@ -106,7 +106,7 @@ Return address is protected by a canary value
 ### **NX : No eXecute**
 
 - NX enabled  : The stack is not executable, so you can't execute code from the stack
-- NX disabled : The stack is executable, so you can put executable code in the stack and execute it (e.g shellcode)
+- NX disabled : The stack is executable, so you can put executable code in the stack and execute it (e.g. shellcode)
 
 ### **PIE : Position Independent Executable**
 
@@ -117,5 +117,5 @@ Return address is protected by a canary value
 
 RPATH specifies where the dynamic loader should search for shared libraries.
 
-- No RPATH : The dynamic loader will search for shared libraries in default locations (e.g /lib, /usr/lib) in first
+- No RPATH : The dynamic loader will search for shared libraries in default locations (e.g. /lib, /usr/lib) in first
 - RPATH    : A specific path is specified at compile time, it will search the specified directories first, if a dir is writable it can be dangerous
